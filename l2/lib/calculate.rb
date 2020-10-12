@@ -7,27 +7,15 @@ class Calculate
   DISPERSION = 'dispersion'.freeze
 
   def self.max(arr)
-    max = arr[0][1].to_f
-    (0..arr.length - 1).each do |i|
-      max = arr[i][1].to_f if arr[i][1].to_f > max
-    end
-    max
+    arr.max
   end
 
   def self.min(arr)
-    min = arr[0][1].to_f
-    (0..arr.length - 1).each do |i|
-      min = arr[i][1].to_f if arr[i][1].to_f < min
-    end
-    min
+    arr.min
   end
 
   def self.average(arr)
-    average = 0.0
-    (0..arr.length - 1).each do |i|
-      average += arr[i][1].to_f
-    end
-    (average / arr.length).round(2)
+    (arr.inject { |sum, el| sum + el }.to_f / arr.size).round(2)
   end
 
   def self.dispersion(arr)
@@ -36,22 +24,31 @@ class Calculate
     average = average(arr)
     result = 0.0
     (0..n - 1).each do |i|
-      result += (arr[i][1].to_f - average)**2
+      result += (arr[i].to_f - average)**2
     end
     (result * coefficient).round(2)
   end
 
+  def self.get_values(arr)
+    result_array = []
+    (0..arr.length - 1).each do |i|
+      result_array[i] = arr[i][1].to_f
+    end
+    result_array
+  end
+
   def self.calculate(operation, file_name)
     arr = CSV.read(file_name)
+    values = get_values(arr)
     case operation
     when MAXIMUM
-      max(arr)
+      max(values)
     when MINIMUM
-      min(arr)
+      min(values)
     when AVERAGE
-      average(arr)
+      average(values)
     when DISPERSION
-      dispersion(arr)
+      dispersion(values)
     end
   end
 end
